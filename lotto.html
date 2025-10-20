@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또번호 추천 웹사이트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .lotto-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .numbers-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .number-ball {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: bounce 0.6s ease-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .number-ball:nth-child(1) { background: #FF6B6B; }
+        .number-ball:nth-child(2) { background: #4ECDC4; }
+        .number-ball:nth-child(3) { background: #45B7D1; }
+        .number-ball:nth-child(4) { background: #96CEB4; }
+        .number-ball:nth-child(5) { background: #FFEAA7; }
+        .number-ball:nth-child(6) { background: #DDA0DD; }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-20px);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .history-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .history-title {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .history-item {
+            background: white;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .clear-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #ff3742;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .number-ball {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+            
+            .numbers-container {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lotto-icon">🎱</div>
+        <h1>로또번호 추천</h1>
+        
+        <button class="generate-btn" onclick="generateNumbers()">
+            🎲 번호 생성하기
+        </button>
+        
+        <div class="numbers-container" id="numbersContainer">
+            <div class="info-text">위 버튼을 클릭하여 로또번호를 생성하세요!</div>
+        </div>
+
+        <div class="history-section">
+            <div class="history-title">📋 생성 기록</div>
+            <div class="history-list" id="historyList">
+                <div class="info-text">아직 생성된 번호가 없습니다.</div>
+            </div>
+            <button class="clear-btn" onclick="clearHistory()">기록 지우기</button>
+        </div>
+
+        <div class="info-text">
+            <p>🍀 행운의 번호를 찾아보세요!</p>
+            <p>1부터 45까지의 숫자 중 6개를 무작위로 선택합니다.</p>
+            <p>※ 이는 단순한 재미용 프로그램입니다.</p>
+        </div>
+    </div>
+
+    <script>
+        let history = JSON.parse(localStorage.getItem('lottoHistory') || '[]');
+
+        function generateNumbers() {
+            // 1-45 범위의 숫자 6개를 중복 없이 생성
+            let numbers = [];
+            while (numbers.length < 6) {
+                let num = Math.floor(Math.random() * 45) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+            
+            // 숫자 정렬
+            numbers.sort((a, b) => a - b);
+            
+            // 화면에 표시
+            displayNumbers(numbers);
+            
+            // 기록에 추가
+            addToHistory(numbers);
+        }
+
+        function displayNumbers(numbers) {
+            const container = document.getElementById('numbersContainer');
+            container.innerHTML = '';
+            
+            numbers.forEach((number, index) => {
+                setTimeout(() => {
+                    const ball = document.createElement('div');
+                    ball.className = 'number-ball';
+                    ball.textContent = number;
+                    ball.style.animationDelay = `${index * 0.1}s`;
+                    container.appendChild(ball);
+                }, index * 100);
+            });
+        }
+
+        function addToHistory(numbers) {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR');
+            
+            const historyItem = {
+                numbers: numbers,
+                timestamp: timeString
+            };
+            
+            history.unshift(historyItem);
+            
+            // 최대 10개까지만 저장
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            
+            // 로컬 스토리지에 저장
+            localStorage.setItem('lottoHistory', JSON.stringify(history));
+            
+            // 화면 업데이트
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="info-text">아직 생성된 번호가 없습니다.</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <strong>${item.numbers.join(', ')}</strong>
+                    <br><small>${item.timestamp}</small>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('정말로 모든 기록을 삭제하시겠습니까?')) {
+                history = [];
+                localStorage.removeItem('lottoHistory');
+                updateHistoryDisplay();
+            }
+        }
+
+        // 페이지 로드 시 기록 표시
+        window.onload = function() {
+            updateHistoryDisplay();
+        }
+
+        // 엔터키로도 번호 생성 가능
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateNumbers();
+            }
+        });
+
+        // 배경 클릭 시 번호 생성 (재미요소)
+        document.body.addEventListener('click', function(event) {
+            if (event.target === document.body) {
+                generateNumbers();
+            }
+        });
+    </script>
+</body>
+</html>
