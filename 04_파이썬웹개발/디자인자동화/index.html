@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 상품 페이지</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: white;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 600px;
+            height: 1024px;
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: normal;
+            color: black;
+            text-align: center;
+            width: 352px;
+            height: 94px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image {
+            width: 434px;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: normal;
+            color: black;
+            text-align: center;
+            width: 223px;
+            height: 51px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .random-button {
+            background-color: #7f35ff;
+            width: 432px;
+            height: 72px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 10px;
+        }
+
+        .random-button:hover {
+            background-color: #6d2dd9;
+            transform: translateY(-2px);
+        }
+
+        .random-button:active {
+            transform: translateY(0);
+        }
+
+        .button-text {
+            font-size: 26px;
+            color: white;
+            font-weight: normal;
+            text-align: center;
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container" data-name="메인" data-node-id="1:2">
+        <div class="title" data-node-id="1:4">
+            메인 화면
+        </div>
+        
+        <div class="product-image" data-node-id="1:5">
+            <img id="productImage" src="https://www.figma.com/api/mcp/asset/ca34f29e-bf7e-481a-b0eb-551af7737d76" alt="상품 이미지">
+        </div>
+        
+        <div class="product-name" data-node-id="1:6">
+            <span id="productName">상품 이름</span>
+        </div>
+        
+        <button class="random-button" data-node-id="1:7" onclick="generateRandomProduct()">
+            <div class="button-text" data-node-id="1:8">
+                랜덤 버튼
+            </div>
+        </button>
+    </div>
+
+    <script>
+        // 랜덤 상품 데이터
+        const products = [
+            {
+                name: "맛있는 피자",
+                image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=434&h=250&fit=crop"
+            },
+            {
+                name: "신선한 샐러드",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=434&h=250&fit=crop"
+            },
+            {
+                name: "치킨 버거",
+                image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=434&h=250&fit=crop"
+            },
+            {
+                name: "스테이크",
+                image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=434&h=250&fit=crop"
+            },
+            {
+                name: "파스타",
+                image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d461?w=434&h=250&fit=crop"
+            },
+            {
+                name: "초밥",
+                image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=434&h=250&fit=crop"
+            },
+            {
+                name: "아이스크림",
+                image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=434&h=250&fit=crop"
+            },
+            {
+                name: "커피",
+                image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=434&h=250&fit=crop"
+            },
+            {
+                name: "케이크",
+                image: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=434&h=250&fit=crop"
+            },
+            {
+                name: "라면",
+                image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=434&h=250&fit=crop"
+            }
+        ];
+
+        let isLoading = false;
+
+        function generateRandomProduct() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const button = document.querySelector('.random-button');
+            const buttonText = document.querySelector('.button-text');
+            const productImage = document.getElementById('productImage');
+            const productName = document.getElementById('productName');
+            
+            // 버튼 로딩 상태
+            button.classList.add('loading');
+            buttonText.textContent = '로딩중...';
+            
+            // 랜덤 딜레이 (0.5초 ~ 1.5초)
+            const delay = Math.random() * 1000 + 500;
+            
+            setTimeout(() => {
+                // 랜덤 상품 선택
+                const randomIndex = Math.floor(Math.random() * products.length);
+                const selectedProduct = products[randomIndex];
+                
+                // 이미지와 이름 업데이트
+                productImage.src = selectedProduct.image;
+                productName.textContent = selectedProduct.name;
+                
+                // 페이드인 효과
+                productImage.classList.add('fade-in');
+                productName.classList.add('fade-in');
+                
+                // 버튼 상태 복원
+                button.classList.remove('loading');
+                buttonText.textContent = '랜덤 버튼';
+                isLoading = false;
+                
+                // 애니메이션 클래스 제거
+                setTimeout(() => {
+                    productImage.classList.remove('fade-in');
+                    productName.classList.remove('fade-in');
+                }, 500);
+                
+            }, delay);
+        }
+
+        // 페이지 로드 시 첫 번째 랜덤 상품 표시
+        window.addEventListener('load', () => {
+            setTimeout(generateRandomProduct, 100);
+        });
+    </script>
+</body>
+</html>

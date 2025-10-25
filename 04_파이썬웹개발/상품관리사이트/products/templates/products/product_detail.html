@@ -1,0 +1,82 @@
+{% extends 'products/base.html' %}
+
+{% block title %}{{ product.name }} - 상품 관리 시스템{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                <i class="fas fa-image fa-5x text-muted"></i>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h1>{{ product.name }}</h1>
+            <div class="btn-group" role="group">
+                <a href="{% url 'product_update' product.pk %}" class="btn btn-warning">
+                    <i class="fas fa-edit me-1"></i>
+                    <span>수정</span> 
+                </a>
+                <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>삭제
+                </a>
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <table class="table table-borderless">
+                <tr>
+                    <th width="100">상품 코드:</th>
+                    <td><code>{{ product.code }}</code></td>
+                </tr>
+                <tr>
+                    <th>가격:</th>
+                    <td class="h4 text-primary">{{ product.formatted_price }}</td>
+                </tr>
+                <tr>
+                    <th>재고:</th>
+                    <td>
+                        {% if product.get_stock_status == '품절' %}
+                            <span class="badge bg-danger fs-6">품절</span>
+                        {% elif product.get_stock_status == '재고 부족' %}
+                            <span class="badge bg-warning text-dark fs-6">재고 부족 ({{ product.stock }}개)</span>
+                        {% else %}
+                            <span class="badge bg-success fs-6">재고 {{ product.stock }}개</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>등록일:</th>
+                    <td>{{ product.created_at|date:"Y년 m월 d일 H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>수정일:</th>
+                    <td>{{ product.updated_at|date:"Y년 m월 d일 H:i" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        {% if product.description %}
+            <div class="mb-4">
+                <h5>상품 설명</h5>
+                <div class="p-3 bg-light rounded">
+                    {{ product.description|linebreaks }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>목록으로 돌아가기
+        </a>
+    </div>
+</div>
+{% endblock %}

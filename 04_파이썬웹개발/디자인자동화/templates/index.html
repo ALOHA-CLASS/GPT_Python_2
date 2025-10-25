@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 상품 페이지 - Flask</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: white;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-container {
+            width: 600px;
+            height: 1024px;
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: normal;
+            color: black;
+            text-align: center;
+            width: 352px;
+            height: 94px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image {
+            width: 434px;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: normal;
+            color: black;
+            text-align: center;
+            width: 223px;
+            min-height: 51px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            width: 400px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        .random-button {
+            background-color: #7f35ff;
+            width: 432px;
+            height: 72px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 10px;
+        }
+
+        .random-button:hover {
+            background-color: #6d2dd9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(127, 53, 255, 0.3);
+        }
+
+        .random-button:active {
+            transform: translateY(0);
+        }
+
+        .button-text {
+            font-size: 26px;
+            color: white;
+            font-weight: normal;
+            text-align: center;
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .product-id {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container" data-name="메인" data-node-id="1:2">
+        <div class="title" data-node-id="1:4">
+            메인 화면
+        </div>
+        
+        <div class="product-image" data-node-id="1:5">
+            <img id="productImage" src="https://www.figma.com/api/mcp/asset/ca34f29e-bf7e-481a-b0eb-551af7737d76" alt="상품 이미지">
+        </div>
+        
+        <div class="product-name" data-node-id="1:6">
+            <span id="productName">상품 이름</span>
+        </div>
+
+        <div class="product-description">
+            <span id="productDescription">상품 설명</span>
+        </div>
+
+        <div class="product-id">
+            <span id="productId">ID: -</span>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            오류가 발생했습니다. 다시 시도해주세요.
+        </div>
+        
+        <button class="random-button" data-node-id="1:7" onclick="generateRandomProduct()">
+            <div class="button-text" data-node-id="1:8">
+                랜덤 버튼
+            </div>
+        </button>
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        async function generateRandomProduct() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const button = document.querySelector('.random-button');
+            const buttonText = document.querySelector('.button-text');
+            const productImage = document.getElementById('productImage');
+            const productName = document.getElementById('productName');
+            const productDescription = document.getElementById('productDescription');
+            const productId = document.getElementById('productId');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 에러 메시지 숨기기
+            errorMessage.style.display = 'none';
+            
+            // 버튼 로딩 상태
+            button.classList.add('loading');
+            buttonText.textContent = '로딩중...';
+            
+            try {
+                // Flask API 호출
+                const response = await fetch('/api/random-product');
+                
+                if (!response.ok) {
+                    throw new Error('API 요청 실패');
+                }
+                
+                const product = await response.json();
+                
+                // 이미지와 정보 업데이트
+                productImage.src = product.image;
+                productName.textContent = product.name;
+                productDescription.textContent = product.description;
+                productId.textContent = `ID: ${product.id}`;
+                
+                // 페이드인 효과
+                productImage.classList.add('fade-in');
+                productName.classList.add('fade-in');
+                productDescription.classList.add('fade-in');
+                
+                // 애니메이션 클래스 제거
+                setTimeout(() => {
+                    productImage.classList.remove('fade-in');
+                    productName.classList.remove('fade-in');
+                    productDescription.classList.remove('fade-in');
+                }, 500);
+                
+            } catch (error) {
+                console.error('상품 로딩 오류:', error);
+                errorMessage.style.display = 'block';
+            } finally {
+                // 버튼 상태 복원
+                button.classList.remove('loading');
+                buttonText.textContent = '랜덤 버튼';
+                isLoading = false;
+            }
+        }
+
+        // 페이지 로드 시 첫 번째 랜덤 상품 표시
+        window.addEventListener('load', () => {
+            setTimeout(generateRandomProduct, 100);
+        });
+
+        // 이미지 로딩 에러 처리
+        document.getElementById('productImage').addEventListener('error', function() {
+            this.src = 'https://via.placeholder.com/434x250/cccccc/ffffff?text=이미지+로딩+실패';
+        });
+    </script>
+</body>
+</html>

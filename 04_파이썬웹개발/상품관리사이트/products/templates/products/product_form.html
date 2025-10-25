@@ -1,0 +1,153 @@
+{% extends 'products/base.html' %}
+
+{% block title %}{{ title }} - 상품 관리 시스템{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-{% if product %}edit{% else %}plus{% endif %} me-2"></i>{{ title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.code.id_for_label }}" class="form-label">{{ form.code.label }}</label>
+                            {{ form.code }}
+                            {% if form.code.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.code.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                            <div class="input-group">
+                                {{ form.price }}
+                                <span class="input-group-text">원</span>
+                            </div>
+                            {% if form.price.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.price.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.stock.id_for_label }}" class="form-label">{{ form.stock.label }}</label>
+                            <div class="input-group">
+                                {{ form.stock }}
+                                <span class="input-group-text">개</span>
+                            </div>
+                            {% if form.stock.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.stock.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+                        {{ form.image }}
+                        {% if product and product.image %}
+                            <div class="mt-2">
+                                <small class="text-muted">현재 이미지:</small><br>
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="max-width: 200px;">
+                            </div>
+                        {% endif %}
+                        {% if form.image.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.image.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% if product %}{% url 'product_detail' product.pk %}{% else %}{% url 'product_list' %}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>취소
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>저장
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 이미지 미리보기 기능
+    document.getElementById('{{ form.image.id_for_label }}').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 기존 미리보기 제거
+                const existingPreview = document.getElementById('image-preview');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                
+                // 새 미리보기 생성
+                const preview = document.createElement('div');
+                preview.id = 'image-preview';
+                preview.className = 'mt-2';
+                preview.innerHTML = `
+                    <small class="text-muted">미리보기:</small><br>
+                    <img src="${e.target.result}" alt="미리보기" class="img-thumbnail" style="max-width: 200px;">
+                `;
+                
+                // 파일 입력 필드 다음에 삽입
+                e.target.parentNode.appendChild(preview);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

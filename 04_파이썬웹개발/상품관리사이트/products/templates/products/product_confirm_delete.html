@@ -1,0 +1,43 @@
+{% extends 'products/base.html' %}
+
+{% block title %}{{ product.name }} 삭제 - 상품 관리 시스템{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>상품 삭제 확인
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail mb-3" style="max-width: 200px;">
+                    {% endif %}
+                    <h5>{{ product.name }}</h5>
+                    <p class="text-muted">상품 코드: {{ product.code }}</p>
+                </div>
+                
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>경고:</strong> 이 작업은 되돌릴 수 없습니다. 정말로 이 상품을 삭제하시겠습니까?
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>취소
+                    </a>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>삭제
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

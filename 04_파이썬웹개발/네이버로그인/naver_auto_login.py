@@ -18,7 +18,7 @@ class NaverAutoLogin:
         # 메인 윈도우 설정
         self.root = tk.Tk()
         self.root.title("네이버 자동 로그인")
-        self.root.geometry("400x300")
+        self.root.geometry("340x450")
         self.root.resizable(False, False)
         
         # 메인 프레임
@@ -38,13 +38,6 @@ class NaverAutoLogin:
         ttk.Label(main_frame, text="비밀번호:").grid(row=2, column=0, sticky=tk.W, pady=5)
         self.pw_entry = ttk.Entry(main_frame, width=30, show="*")
         self.pw_entry.grid(row=2, column=1, pady=5, padx=(10, 0))
-        
-        # 브라우저 선택
-        ttk.Label(main_frame, text="브라우저:").grid(row=3, column=0, sticky=tk.W, pady=5)
-        self.browser_var = tk.StringVar(value="Chrome")
-        browser_combo = ttk.Combobox(main_frame, textvariable=self.browser_var, 
-                                   values=["Chrome", "Edge"], state="readonly", width=27)
-        browser_combo.grid(row=3, column=1, pady=5, padx=(10, 0))
         
         # 헤드리스 모드 체크박스
         self.headless_var = tk.BooleanVar()
@@ -66,42 +59,6 @@ class NaverAutoLogin:
         close_btn = ttk.Button(main_frame, text="종료", command=self.close_application)
         close_btn.grid(row=7, column=0, columnspan=2, pady=10)
     
-    def setup_driver(self):
-        """브라우저 드라이버 설정"""
-        try:
-            if self.browser_var.get() == "Chrome":
-                options = Options()
-                if self.headless_var.get():
-                    options.add_argument("--headless")
-                options.add_argument("--no-sandbox")
-                options.add_argument("--disable-dev-shm-usage")
-                options.add_argument("--disable-gpu")
-                options.add_argument("--window-size=1920,1080")
-                
-                # 사용자 에이전트 설정 (봇 탐지 방지)
-                options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                
-                self.driver = webdriver.Chrome(options=options)
-            
-            elif self.browser_var.get() == "Edge":
-                from selenium.webdriver.edge.options import Options as EdgeOptions
-                from selenium.webdriver.edge.service import Service as EdgeService
-                
-                options = EdgeOptions()
-                if self.headless_var.get():
-                    options.add_argument("--headless")
-                options.add_argument("--no-sandbox")
-                options.add_argument("--disable-dev-shm-usage")
-                options.add_argument("--disable-gpu")
-                options.add_argument("--window-size=1920,1080")
-                
-                self.driver = webdriver.Edge(options=options)
-            
-            return True
-            
-        except Exception as e:
-            messagebox.showerror("오류", f"브라우저 드라이버 설정 실패:\n{str(e)}\n\n브라우저 드라이버가 설치되어 있는지 확인하세요.")
-            return False
     
     def auto_login(self):
         """자동 로그인 실행"""
@@ -118,14 +75,14 @@ class NaverAutoLogin:
         
         try:
             # 드라이버 설정
-            if not self.setup_driver():
-                return
+            # if not self.setup_driver():
+            #     return
             
             # 네이버 로그인 페이지 접속
-            self.status_label.config(text="네이버 로그인 페이지에 접속 중...")
-            self.root.update()
+            # self.status_label.config(text="네이버 로그인 페이지에 접속 중...")
+            # self.root.update()
             
-            self.driver.get("https://nid.naver.com/nidlogin.login")
+            # self.driver.get("https://nid.naver.com/nidlogin.login")
             
             # 페이지 로딩 대기
             wait = WebDriverWait(self.driver, 10)
@@ -210,9 +167,29 @@ class NaverAutoLogin:
     
     def run(self):
         """GUI 실행"""
+        # 브라우저 실행
+        self.run_chrome()
         # 윈도우 닫기 이벤트 처리
         self.root.protocol("WM_DELETE_WINDOW", self.close_application)
         self.root.mainloop()
+
+    def run_chrome(self):
+        options = Options()
+        if self.headless_var.get():
+            options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--window-size=1920,1080")
+        
+        # 사용자 에이전트 설정 (봇 탐지 방지)
+        options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+        
+        # 브라우저 드라이버 실행
+        self.driver = webdriver.Chrome(options=options)
+        # 네이버 로그인 페이지 접속
+        self.driver.get("https://nid.naver.com/nidlogin.login")
+    
 
 if __name__ == "__main__":
     app = NaverAutoLogin()

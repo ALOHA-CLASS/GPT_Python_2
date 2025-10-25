@@ -1,0 +1,233 @@
+/* 전체 페이지 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* 네비게이션 바 스타일 */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+/* 상품 카드 스타일 */
+.product-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.product-image {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
+
+.product-image-placeholder {
+    height: 200px;
+    background-color: #e9ecef;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
+
+/* 카드 제목 스타일 */
+.card-title {
+    font-weight: 600;
+    color: #495057;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 가격 텍스트 */
+.price-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+/* 재고 배지 스타일 */
+.stock-badge {
+    font-size: 0.8rem;
+}
+
+/* 버튼 그룹 스타일 */
+.btn-group .btn {
+    flex: 1;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    margin-top: 2rem;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* 검색 폼 스타일 */
+.search-form {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+/* 알림 메시지 스타일 */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+/* 폼 스타일 */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* 카드 스타일 */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    background-color: #007bff;
+    color: white;
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    font-weight: 600;
+}
+
+/* 상품 상세 이미지 */
+.product-detail-image {
+    max-height: 500px;
+    object-fit: contain;
+    width: 100%;
+}
+
+/* 테이블 스타일 */
+.table th {
+    font-weight: 600;
+    color: #495057;
+    border-top: none;
+    vertical-align: middle;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+/* 빈 상태 스타일 */
+.empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: #6c757d;
+}
+
+.empty-state i {
+    margin-bottom: 1rem;
+}
+
+/* 이미지 썸네일 */
+.img-thumbnail {
+    border: 2px solid #dee2e6;
+    border-radius: 0.5rem;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .product-card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem;
+    }
+    
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 스크롤바 스타일 (Webkit 기반 브라우저) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 로딩 스피너 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+.btn { 
+    min-width: 80px;
+}
+
+
